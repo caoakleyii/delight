@@ -13,10 +13,12 @@ function Character:new()
     return setmetatable(character, self)
 end
 
+-- Love2D Events
 function Character:load()
 
     networking:signal(NETWORK_MESSAGE_TYPES.player_inputs, self, self.on_player_inputs)
     networking:signal(NETWORK_MESSAGE_TYPES.player_input_release, self, self.on_player_inputs_release)
+    networking:signal(NETWORK_MESSAGE_TYPES.lerp, self, self.on_lerp)
 
     if self.local_player then
         function love.keypressed(key, scancode, isrepeat)
@@ -40,9 +42,30 @@ function Character:load()
     end
 end
 
+function Character:update(dt)
+end
+
+function Character:draw()
+end
+
+--  Methods
+function Character:lerp()
+    if server then
+        server:broadcast(NETWORK_MESSAGE_TYPES.lerp, {
+            id = self.id,
+            position = {
+                x = self.position.x,
+                y = self.position.y
+            }
+        })
+    end
+end
+
+
+-- SIGNAL EVENTS
+
 function Character:on_player_inputs(data)
     self.keys_down[data.key] = true
-    print(data.key)
     if server then
         server:broadcast_except(self.player, NETWORK_MESSAGE_TYPES.player_inputs, data)
     end
@@ -50,10 +73,14 @@ end
 
 function Character:on_player_inputs_release(data)
     self.keys_down[data.key] = nil
-    print(data.key)
     if server then
         server:broadcast_except(self.player, NETWORK_MESSAGE_TYPES.player_input_release, data)
     end
+end
+
+function Character:on_lerp(data)
+    self.position.x = data.position.x
+    self.position.y = data.position.y
 end
 
 return Character
