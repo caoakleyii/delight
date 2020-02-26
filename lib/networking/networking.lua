@@ -3,6 +3,8 @@ local PlayerJoined = require 'lib.networking.messages.player_joined'
 local PlayerInputs = require 'lib.networking.messages.player_inputs'
 local PlayerInputRelease = require 'lib.networking.messages.player_input_release'
 local Lerp = require 'lib.networking.messages.lerp'
+local AiAction = require 'lib.networking.messages.ai_action'
+local AiSpawned = require 'lib.networking.messages.ai_spawned'
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
 local NETWORK_MESSAGE_TYPES_INVERTED = require 'lib.types.network_message_types_inverted'
 local Networking = {}
@@ -14,7 +16,9 @@ function Networking:new()
         [NETWORK_MESSAGE_TYPES.player_joined] = PlayerJoined:new(),
         [NETWORK_MESSAGE_TYPES.player_inputs] = PlayerInputs:new(),
         [NETWORK_MESSAGE_TYPES.player_input_release] = PlayerInputRelease:new(),
-        [NETWORK_MESSAGE_TYPES.lerp] = Lerp:new()
+        [NETWORK_MESSAGE_TYPES.lerp] = Lerp:new(),
+        [NETWORK_MESSAGE_TYPES.ai_action] = AiAction:new(),
+        [NETWORK_MESSAGE_TYPES.ai_spawned] = AiSpawned:new()
     }
     networking.message_signals = {}
     self.__index = self

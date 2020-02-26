@@ -48,6 +48,16 @@ function PlayerSpawner:player_joined(player)
         })
     end
 
+    -- tell player about other enemies
+    for _, ai in ipairs(entity_system.ai) do
+        server:send_to(player, NETWORK_MESSAGE_TYPES.ai_spawned, {
+            id = ai_spawner.id,
+            entity_node_id = ai.id,
+            position = ai.position,
+            waypoint = ai.waypoint and ai.waypoint or ai.position
+        })
+    end
+
     -- add to entity system
     self:on_player_joined(character_data)
 end

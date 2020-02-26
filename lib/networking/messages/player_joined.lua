@@ -1,18 +1,23 @@
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
 local PlayerJoined = {}
 
+--- PlayerJoined message service.
+-- This message services handles the packaging and unpackaging
+-- of the network message type player_joined.
 function PlayerJoined:new()
     local player_joined = {}
     self.__index = self
     return setmetatable(player_joined, self)
 end
 
+--- Packs the data into a compressed string.
+-- @table data The data to be packaged
+-- @treturn string packaged data
 function PlayerJoined:package(data)
-    -- Player Joined PACKET INFO
+    -- Player Joined Packet Info
     ---------------------
-    -- Player joined network message,  15+ Bytes total
-    -- 1 byte MESSAGE_TYPE | 4 byte NODE_ID | 4 Byte Entity Node Id | 1 byte ENTITY_TYPE | 2 bytes Player X | 2 bytes Player Y | X bytes Name
-    -- char
+    -- Player joined network message,  16+ Bytes total
+    -- 1 byte Message Type | 4 byte Node ID | 4 Byte Entity Node ID | 1 Byte Entity Type | 2 Bytes Player X | 2 Bytes Player Y | 1+ Bytes Name
     ---------------------
 
     local type_byte = love.data.pack('string', 'b', NETWORK_MESSAGE_TYPES.player_joined)
@@ -25,12 +30,14 @@ function PlayerJoined:package(data)
     local player_name_bytes = love.data.pack('string', 'z', data.name)
 
 
-    -- lua is fucking weird and has 1 based indexes for everything.
-    -- wtf i know
-    --        1,           2, 3, 4, 5,          6,7,8,9                 10,             11,12             13, 14,                   15              16+
+    -- Byte indicies
+    --        1,         2, 3, 4, 5,          6,7,8,9,                 10,                  11,12,           13, 14,               15,              16+
     return type_byte .. node_id_bytes .. entity_node_id_byte .. character_type_byte .. entity_x_bytes .. entity_y_bytes .. local_player_byte ..  player_name_bytes
 end
 
+--- Unpacks the compressed data into a table.
+-- @string packed_data The packed data to unpackage
+-- @treturn table The unpackaged data as a table
 function PlayerJoined:unpackage(packed_data)
     return {
         id = love.data.unpack('I', packed_data:sub(2, 5)),

@@ -10,5 +10,6 @@ return {
     ai_action_release = 7,
     damage = 8,
     destroy = 9,
-    ping = 10
+    ai_spawned = 10,
+    ping = 99
 }

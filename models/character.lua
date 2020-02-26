@@ -1,4 +1,6 @@
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
+local COLLISION_SIGNAL_TYPES = require 'lib.types.collision_signal_types'
+
 local Character = {}
 function Character:new()
     local character = {}
@@ -9,16 +11,26 @@ function Character:new()
     character.local_player = false
     character.player = {}
     character.keys_down = {}
+    character.speed = 50
+    character.size = 25
+    character.groups = { "Player" }
     self.__index = self
     return setmetatable(character, self)
 end
 
 -- Love2D Events
-function Character:load()
+function Character:load(world)
+    self.body = love.physics.newBody(world, self.size / 2, self.size / 2, "dynamic")
+    self.shape = love.physics.newCircleShape(self.size)
+    self.fixture = love.physics.newFixture(self.body, self.shape, 1)
+    self.fixture:setUserData(self)
+    self.body:setPosition(self.position.x, self.position.y)
 
     networking:signal(NETWORK_MESSAGE_TYPES.player_inputs, self, self.on_player_inputs)
     networking:signal(NETWORK_MESSAGE_TYPES.player_input_release, self, self.on_player_inputs_release)
     networking:signal(NETWORK_MESSAGE_TYPES.lerp, self, self.on_lerp)
+
+    entity_system:signal(COLLISION_SIGNAL_TYPES.begin_contact, self, self.on_collide)
 
     if self.local_player then
         function love.keypressed(key, scancode, isrepeat)
@@ -43,9 +55,28 @@ function Character:load()
 end
 
 function Character:update(dt)
+    local current_speed = self.speed * dt
+    if self.keys_down['w'] then
+        self.position.y = self.position.y - current_speed
+    end
+    if self.keys_down['a'] then
+        self.position.x = self.position.x - current_speed
+    end
+    if self.keys_down['s'] then
+        self.position.y = self.position.y + current_speed
+    end
+    if self.keys_down['d'] then
+        self.position.x = self.position.x + current_speed
+    end
+
+    -- this can be reversed to use the love2d physics engine
+    -- by using apply force on the ball, and then setting body:getX(), and body:getY() to position
+    self.body:setPosition(self.position.x, self.position.y)
+    self.body:setAwake(true)
 end
 
 function Character:draw()
+    love.graphics.circle('line', self.body:getX(), self.body:getY(), self.shape:getRadius())
 end
 
 --  Methods
@@ -63,6 +94,10 @@ end
 
 
 -- SIGNAL EVENTS
+
+function Character:on_collide(body, collision)
+    print(body)
+end
 
 function Character:on_player_inputs(data)
     self.keys_down[data.key] = true
