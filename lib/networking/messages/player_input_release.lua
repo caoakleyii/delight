@@ -13,14 +13,14 @@ end
 --- Packs the data into a compressed string.
 -- @table data The data to be packaged
 -- @treturn string packaged data
-function PlayerInputRelease:package(data)
+function PlayerInputRelease:package(node_id, data)
     -- Player Input Release Packet Info
     ---------------------
     -- Player Input Release network message, 6+ Byte total
     -- 1 Byte Message Type | 4 Bytes Node ID | 1+ Byte Key
     ---------------------
     local type_byte = love.data.pack('string', 'b', NETWORK_MESSAGE_TYPES.player_input_release)
-    local node_id_bytes = love.data.pack('string', 'I', data.id)
+    local node_id_bytes = love.data.pack('string', 'I', node_id)
     local key_bytes = love.data.pack('string', 'z', data.key)
 
     -- Byte indicies

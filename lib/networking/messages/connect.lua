@@ -13,14 +13,14 @@ end
 --- Packs the data into a compressed string.
 -- @table data The data to be packaged
 -- @treturn string packaged data
-function Connect:package(data)
+function Connect:package(node_id, data)
     -- Connect Packet Info
     ---------------------
     -- Connect network message, 6+ Bytes total
     -- 1 Byte Message Type | 4 Bytes Node ID | 1+ Byte(s) Name -- [IF you have any auth, this is where a JWT Token, Auth Token, User Auth could go]
     ---------------------
     local type_byte = love.data.pack('string', 'b', NETWORK_MESSAGE_TYPES.connect)
-    local node_id_bytes = love.data.pack('string', 'I', data.id)
+    local node_id_bytes = love.data.pack('string', 'I', node_id)
     local name_bytes = love.data.pack('string', 'z', data.name)
 
     -- Byte indicies

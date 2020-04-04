@@ -45,7 +45,7 @@ bin/start_client.cmd
   *  Each entity will be able to implement their own `load()`, `update(dt)` and `draw()` methods, that will be called if they are added to the `EntitySystem`
 *  _entity_system.lua_
    *  This is where the entities running within the game will be easily managed, adding, accessing, and removing.
-   *  EntitySystem also has an event handler, called `signals`, you are able to hook an entity into the four collision events, `begin_contact`, `end_contact`, `pre_solve`, and `end_solve`
+   *  EntitySystem also has an event handler, called `signals`, you are able to hook a `Fixture` into the four collision events, `begin_contact`, `end_contact`, `pre_solve`, and `end_solve`
    *  The entity system also create the `love.physics.World`
 * _client.lua_
   * This handle the configuration of which server to connect to, and shares the same node ID as the `Server`

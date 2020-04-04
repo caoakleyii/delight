@@ -1,11 +1,13 @@
 local Enemy = require 'models.enemy'
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
 local ENTITY_TYPES = require 'lib.types.entity_types'
+local GLOBAL_NODE_TYPES = require 'lib.types.global_node_tyes'
+
 local AiSpawner = {}
 
 function AiSpawner:new()
     local ai_spawner = {}
-    ai_spawner.id = 3
+    ai_spawner.id = GLOBAL_NODE_TYPES.ai_spawner
     self.__index = self
 
     networking:signal(NETWORK_MESSAGE_TYPES.ai_spawned, ai_spawner, self.on_ai_spawned)
@@ -17,13 +19,13 @@ function AiSpawner:spawn_ai(e)
 
     -- send character to everyone, tell local player they're local
     local enemy_data = {
-        id = self.id,
         entity_node_id = enemy.id,
         position = enemy.position,
-        waypoint = enemy.waypoint and enemy.waypoint or enemy.position
+        waypoint = enemy.waypoint,
+        actions = enemy.actions
     }
 
-    server:broadcast(NETWORK_MESSAGE_TYPES.ai_spawned, enemy_data)
+    server:broadcast(NETWORK_MESSAGE_TYPES.ai_spawned, self.id, enemy_data)
 
     -- add to entity system
     self:on_ai_spawned(enemy_data)

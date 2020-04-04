@@ -1,13 +1,14 @@
 local socket = require 'socket'
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
+local GLOBAL_NODE_TYPES = require 'lib.types.global_node_tyes'
 local Player = require 'lib.networking.player'
 local stringx = require 'packages.pl.stringx'
-require 'lib.networking.networking'
 
 local Server = {}
+
 function Server:new()
     local server = {}
-    server.id = '1'  -- Should be same Node ID as Client
+    server.id = GLOBAL_NODE_TYPES.client_server
     server.port = 8080
     server.address = '*'
     server.players = {}
@@ -37,24 +38,24 @@ function Server:receive()
     networking:unpackage(packaged_data, player_id)
 end
 
-function Server:send_to(player, message_type, data)
-    local packaged_data = networking:package(message_type, data)
+function Server:send_to(player, message_type, node_id, data)
+    local packaged_data = networking:package(message_type, node_id, data)
     local success, err = self.udp:sendto(packaged_data, player.ip, player.port)
     if not success then
         print(success, ' ', err)
     end
 end
 
-function Server:broadcast(message_type, data)
+function Server:broadcast(message_type, node_id, data)
     for _, player  in pairs(self.players) do
-        self:send_to(player, message_type, data)
+        self:send_to(player, message_type, node_id, data)
     end
 end
 
-function Server:broadcast_except(exception_player, message_type, data)
+function Server:broadcast_except(exception_player, message_type, node_id, data)
     for _, player in pairs(self.players) do
         if player.id ~= exception_player.id then
-            self:send_to(player, message_type, data)
+            self:send_to(player, message_type, node_id, data)
         end
     end
 end

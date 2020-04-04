@@ -1,11 +1,13 @@
 local socket = require 'socket'
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
+local GLOBAL_NODE_TYPES = require 'lib.types.global_node_tyes'
+
 local Client = {}
 require 'lib.networking.networking'
 
 function Client:new()
     local client = {}
-    client.id = 1 -- Should be same Node ID as Server
+    client.id = GLOBAL_NODE_TYPES.client_server
     client.server_address = 'localhost'
     client.server_port = 8080
     client.udp = socket.udp()
@@ -19,7 +21,7 @@ function Client:connect()
     networking:signal(NETWORK_MESSAGE_TYPES.player_joined, self, self.on_player_joined)
     self.udp:settimeout(0)
     self.udp:setpeername(self.server_address, self.server_port)
-    self:send(NETWORK_MESSAGE_TYPES.connect, { id = self.id, name = 'Cervial' })
+    self:send(NETWORK_MESSAGE_TYPES.connect, self.id, { name = 'Cervial' })
     self.connect = true
 end
 
@@ -33,8 +35,8 @@ function Client:disconnect()
     self.connected = false
 end
 
-function Client:send(message_type, data)
-    local packaged_data = networking:package(message_type, data)
+function Client:send(message_type, node_id, data)
+    local packaged_data = networking:package(message_type, node_id, data)
     self.udp:send(packaged_data)
 end
 

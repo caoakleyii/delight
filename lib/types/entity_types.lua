@@ -1,4 +1,5 @@
 return {
     characters = 'characters',
-    ai = 'ai'
+    ai = 'ai',
+    objects = 'objects'
 }

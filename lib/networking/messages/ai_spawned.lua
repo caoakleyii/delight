@@ -13,7 +13,7 @@ end
 --- Packs the data into a compressed string.
 -- @table data The data to be packaged
 -- @treturn string packaged data
-function AiSpawned:package(data)
+function AiSpawned:package(node_id, data)
     -- AI Spawned Packet Info
     ---------------------
     -- AI Spawned network message,  17 Bytes total
@@ -21,7 +21,7 @@ function AiSpawned:package(data)
     ---------------------
 
     local type_byte = love.data.pack('string', 'b', NETWORK_MESSAGE_TYPES.ai_spawned)
-    local node_id_bytes = love.data.pack('string', 'I', data.id)
+    local node_id_bytes = love.data.pack('string', 'I', node_id)
     local entity_node_id_byte = love.data.pack('string', 'I', data.entity_node_id)
     local entity_x_bytes = love.data.pack('string', 'H', math.floor(data.position.x))
     local entity_y_bytes = love.data.pack('string', 'H', math.floor(data.position.y))

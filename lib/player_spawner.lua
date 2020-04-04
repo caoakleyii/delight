@@ -1,11 +1,13 @@
 local Character = require 'models.character'
 local NETWORK_MESSAGE_TYPES = require 'lib.types.network_message_types'
 local ENTITY_TYPES = require 'lib.types.entity_types'
+local GLOBAL_NODE_TYPES = require 'lib.types.global_node_tyes'
+
 local PlayerSpawner = {}
 
 function PlayerSpawner:new()
     local player_spawner = {}
-    player_spawner.id = 2
+    player_spawner.id = GLOBAL_NODE_TYPES.player_spawner
     self.__index = self
 
     networking:signal(NETWORK_MESSAGE_TYPES.player_joined, player_spawner, self.on_player_joined)
@@ -23,7 +25,6 @@ function PlayerSpawner:player_joined(player)
 
     -- send character to everyone, tell local player they're local
     local character_data = {
-        id = self.id,
         entity_node_id = character.id,
         character_type = character.type,
         position = character.position,
@@ -31,15 +32,14 @@ function PlayerSpawner:player_joined(player)
         local_player = true
     }
 
-    server:send_to(player, NETWORK_MESSAGE_TYPES.player_joined, character_data)
+    server:send_to(player, NETWORK_MESSAGE_TYPES.player_joined, self.id, character_data)
 
     character_data.local_player = false
-    server:broadcast_except(player, NETWORK_MESSAGE_TYPES.player_joined, character_data)
+    server:broadcast_except(player, NETWORK_MESSAGE_TYPES.player_joined, self.id, character_data)
 
     -- tell player about other characters
-    for _, c in ipairs(entity_system.characters) do
-        server:send_to(player, NETWORK_MESSAGE_TYPES.player_joined, {
-            id = self.id,
+    for _, c in pairs(entity_system.characters) do
+        server:send_to(player, NETWORK_MESSAGE_TYPES.player_joined, self.id, {
             entity_node_id = c.id,
             character_type = c.type,
             position = c.position,
@@ -49,12 +49,11 @@ function PlayerSpawner:player_joined(player)
     end
 
     -- tell player about other enemies
-    for _, ai in ipairs(entity_system.ai) do
-        server:send_to(player, NETWORK_MESSAGE_TYPES.ai_spawned, {
-            id = ai_spawner.id,
+    for _, ai in pairs(entity_system.ai) do
+        server:send_to(player, NETWORK_MESSAGE_TYPES.ai_spawned, ai_spawner.id, {
             entity_node_id = ai.id,
             position = ai.position,
-            waypoint = ai.waypoint and ai.waypoint or ai.position
+            waypoint = ai.waypoint
         })
     end
 

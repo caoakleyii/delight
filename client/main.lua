@@ -1,11 +1,17 @@
+require 'lib.extensions'
 require 'lib.networking.networking'
 require 'client.client'
 require 'lib.player_spawner'
 require 'lib.entity_system'
 require 'lib.ai_spawner'
-require 'lib.extensions.math'
+
+local ground = {}
 
 function love.load()
+    ground.body = love.physics.newBody(entity_system.world, 1920/ 2, 1080)
+    ground.shape = love.physics.newRectangleShape(1920, 50)
+    ground.fixture = love.physics.newFixture(ground.body, ground.shape)
+    ground.fixture:setFriction(1.0)
     client:connect()
 end
 
@@ -14,22 +20,48 @@ function love.update(dt)
 
     entity_system.world:update(dt)
 
-    for _, c in ipairs(entity_system.characters) do
-        c:update(dt)
+    for k, c in pairs(entity_system.characters) do
+        if c.cleanup then
+            entity_system.characters[k] = nil
+        else
+            c:update(dt)
+        end
     end
 
-    for _, ai in ipairs(entity_system.ai) do
-        ai:update(dt)
+    for k, ai in pairs(entity_system.ai) do
+        if ai.cleanup then
+            entity_system.ai[k] = nil
+        else
+            ai:update(dt)
+        end
+    end
+
+    for k, o in pairs(entity_system.objects) do
+        if o.cleanup then
+            entity_system.objects[k] = nil
+        else
+            o:update(dt)
+        end
     end
 end
 
 function love.draw()
-    for _, c in ipairs(entity_system.characters) do
+    -- set the drawing color to green for the ground
+    love.graphics.setColor(0.28, 0.63, 0.05)
+    -- draw a "filled in" polygon using the ground's coordinates
+    love.graphics.polygon("fill", ground.body:getWorldPoints(
+                            ground.shape:getPoints()))
+
+    for _, c in pairs(entity_system.characters) do
         c:draw()
     end
 
-    for _, ai in ipairs(entity_system.ai) do
+    for _, ai in pairs(entity_system.ai) do
         ai:draw()
+    end
+
+    for _, o in pairs(entity_system.objects) do
+        o:draw()
     end
 end
 

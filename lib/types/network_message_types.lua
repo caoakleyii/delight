@@ -6,10 +6,9 @@ return {
     player_input_release = 3,
     player_angle = 4,
     lerp = 5,
-    ai_action = 6,
-    ai_action_release = 7,
-    damage = 8,
-    destroy = 9,
-    ai_spawned = 10,
+    damage = 6,
+    destroy = 7,
+    ai_spawned = 8,
+    custom = 98,
     ping = 99
 }
