@@ -34,4 +34,11 @@ function Actor:on_lerp(data)
     self.body:setLinearVelocity(data.velocity.x, data.velocity.y)
 end
 
+function Actor:on_disconnect()
+    if server then
+        server:broadcast(NETWORK_MESSAGE_TYPES.disconnect, self.id)
+    end
+    self.cleanup = true
+end
+
 return Actor

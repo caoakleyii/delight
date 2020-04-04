@@ -11,7 +11,6 @@ function Client:new()
     client.server_address = 'localhost'
     client.server_port = 8080
     client.udp = socket.udp()
-    client.players = {}
     client.connected = false
     self.__index = self
     return setmetatable(client, self)

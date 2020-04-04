@@ -74,4 +74,8 @@ function Server:on_connect(data, player_id)
     player_spawner:player_joined(player)
 end
 
+function Server:disconnect(player_id)
+    self.players[player_id] = nil
+end
+
 server = Server:new()

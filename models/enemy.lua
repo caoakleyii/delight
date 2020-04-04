@@ -124,10 +124,13 @@ function Enemy:on_aggro_leave(fixture)
         return
     end
 
-   if self.aggrod_character.id == data.id then
-    self.aggrod_character = nil
-   end
+    if self.aggrod_character == nil then
+        return
+    end
 
+    if self.aggrod_character.id == data.id then
+        self.aggrod_character = nil
+    end
 end
 
 return Enemy

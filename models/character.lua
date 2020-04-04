@@ -36,7 +36,7 @@ function Character:load(world)
     networking:signal(NETWORK_MESSAGE_TYPES.player_inputs, self, self.on_player_inputs)
     networking:signal(NETWORK_MESSAGE_TYPES.player_input_release, self, self.on_player_inputs_release)
     networking:signal(NETWORK_MESSAGE_TYPES.lerp, self, self.on_lerp)
-
+    networking:signal(NETWORK_MESSAGE_TYPES.disconnect, self, self.on_disconnect)
     entity_system:signal(COLLISION_SIGNAL_TYPES.begin_contact, self.fixture, self, self.on_collide)
 
     if self.local_player then
@@ -57,6 +57,10 @@ function Character:load(world)
             self.keys_down[key] = nil
             -- TODO: update when key mappings become a thing
             client:send(NETWORK_MESSAGE_TYPES.player_input_release, self.id, { key = key })
+        end
+
+        function love.quit(exitstatus)
+            client:send(NETWORK_MESSAGE_TYPES.disconnect, self.id)
         end
     end
 end

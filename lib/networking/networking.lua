@@ -1,3 +1,4 @@
+local Disconnect = require 'lib.networking.messages.disconnect'
 local Connect = require 'lib.networking.messages.connect'
 local PlayerJoined = require 'lib.networking.messages.player_joined'
 local PlayerInputs = require 'lib.networking.messages.player_inputs'
@@ -13,6 +14,7 @@ local Networking = {}
 function Networking:new()
     local networking = {}
     networking.message_services = {
+        [NETWORK_MESSAGE_TYPES.disconnect] = Disconnect:new(),
         [NETWORK_MESSAGE_TYPES.connect] = Connect:new(),
         [NETWORK_MESSAGE_TYPES.player_joined] = PlayerJoined:new(),
         [NETWORK_MESSAGE_TYPES.player_inputs] = PlayerInputs:new(),
