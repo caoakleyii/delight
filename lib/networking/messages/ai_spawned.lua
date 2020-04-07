@@ -27,11 +27,12 @@ function AiSpawned:package(node_id, data)
     local entity_y_bytes = love.data.pack('string', 'H', math.floor(data.position.y))
     local waypoint_x_bytes = love.data.pack('string', 'H', math.floor(data.waypoint.x))
     local waypoint_y_bytes = love.data.pack('string', 'H', math.floor(data.waypoint.y))
-
+    local current_health = love.data.pack('string', 'H', math.floor(data.current_health))
+    local max_health = love.data.pack('string', 'H', math.floor(data.max_health))
 
     -- Bytes Indicies
-    --        1,           2, 3, 4, 5,          6,7,8,9              10, 11          12,13              14,15               16, 17
-    return type_byte .. node_id_bytes .. entity_node_id_byte .. entity_x_bytes .. entity_y_bytes .. waypoint_x_bytes .. waypoint_y_bytes
+    --        1,           2, 3, 4, 5,          6,7,8,9              10, 11          12,13              14,15               16, 17              18,19           20,21
+    return type_byte .. node_id_bytes .. entity_node_id_byte .. entity_x_bytes .. entity_y_bytes .. waypoint_x_bytes .. waypoint_y_bytes .. current_health .. max_health
 end
 
 --- Unpacks the compressed data into a table.
@@ -48,7 +49,9 @@ function AiSpawned:unpackage(packed_data)
         waypoint = {
             x = love.data.unpack('H', packed_data:sub(14, 15)),
             y = love.data.unpack('H', packed_data:sub(16, 17))
-        }
+        },
+        current_health = love.data.unpack('H', packed_data:sub(18,19)),
+        max_health = love.data.unpack('H', packed_data:sub(20,21))
     }
 end
 

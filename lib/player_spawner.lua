@@ -53,7 +53,9 @@ function PlayerSpawner:player_joined(player)
         server:send_to(player, NETWORK_MESSAGE_TYPES.ai_spawned, ai_spawner.id, {
             entity_node_id = ai.id,
             position = ai.position,
-            waypoint = ai.waypoint
+            waypoint = ai.waypoint,
+            current_health = ai.current_health,
+            max_health = ai.max_health
         })
     end
 

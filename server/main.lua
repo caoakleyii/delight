@@ -54,13 +54,13 @@ function love.update(dt)
     if last_updated >= update_time then
         last_updated = 0
         for _, c in pairs(entity_system.characters) do
-            if c.lerp then
+            if c.lerp and not c.destroyed then
                 c:lerp()
             end
         end
 
         for _, ai in pairs(entity_system.ai) do
-            if ai.lerp then
+            if ai.lerp and not ai.destroyed  then
                 ai:lerp()
             end
         end

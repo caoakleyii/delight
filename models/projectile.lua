@@ -12,6 +12,7 @@ function Projectile:new()
     projectile.direction = 0
     projectile.distance = 5000
     projectile.collidables_mask = ENTITY_CATEGORIES.everything
+    projectile.damage = 10
     self.__index = self
     return setmetatable(projectile, self)
 end
@@ -20,6 +21,7 @@ function Projectile:load(world)
     self.body = love.physics.newBody(world, self.size / 2, self.size / 2, "dynamic")
     self.shape = love.physics.newCircleShape(self.size)
     self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setDensity(0)
     self.fixture:setFilterData(ENTITY_CATEGORIES.projectile, self.collidables_mask, 0)
     self.body:setPosition(self.position.x, self.position.y)
     self.original_position = { x = self.position.x, y = self.position.y }
@@ -52,10 +54,15 @@ function Projectile:on_collision(fixture)
         return
     end
 
+    if object.damage ~= nil then
+        object:damage(self.damage)
+    end
+
     self:release()
 end
 
 function Projectile:release()
+    self.body:destroy()
     self.cleanup = true
 end
 

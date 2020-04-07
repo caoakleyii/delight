@@ -28,8 +28,8 @@ end
 
 
 function Actor:on_lerp(data)
-    local x = math.lerp_value(self.position.x, data.position.x, 0.6)
-    local y = math.lerp_value(self.position.y, data.position.y, 0.6)
+    local x = math.lerp_value(self.position.x, data.position.x, 0.75)
+    local y = math.lerp_value(self.position.y, data.position.y, 0.75)
     self.body:setPosition(x, y)
     self.body:setLinearVelocity(data.velocity.x, data.velocity.y)
 end

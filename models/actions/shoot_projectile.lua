@@ -33,9 +33,9 @@ function ShootProjectile:new()
 end
 
 
-function ShootProjectile:shoot(direction, position_x, position_y)
+function ShootProjectile:shoot(direction, position_x, position_y, server_synced)
 
-    if server then
+    if server and server_synced then
         server:broadcast(NETWORK_MESSAGE_TYPES.custom, self.id, {
             CustomDataBytes:new({
                 key = 'direction',
@@ -53,15 +53,14 @@ function ShootProjectile:shoot(direction, position_x, position_y)
                 value = position_y
             })
         })
-
-        local projectile = Projectile:new()
-        projectile.direction = direction
-        projectile.position =  {
-            x = position_x,
-            y = position_y
-        }
-        entity_system:add(ENTITY_TYPES.objects, projectile)
     end
+    local projectile = Projectile:new()
+    projectile.direction = direction
+    projectile.position =  {
+        x = position_x,
+        y = position_y
+    }
+    entity_system:add(ENTITY_TYPES.objects, projectile)
 end
 
 function ShootProjectile:on_shoot(data)

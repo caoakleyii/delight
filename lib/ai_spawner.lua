@@ -22,6 +22,8 @@ function AiSpawner:spawn_ai(e)
         entity_node_id = enemy.id,
         position = enemy.position,
         waypoint = enemy.waypoint,
+        current_health = enemy.current_health,
+        max_health = enemy.max_health,
         actions = enemy.actions
     }
 
@@ -42,6 +44,8 @@ function AiSpawner:on_ai_spawned(e)
         x = e.waypoint.x,
         y = e.waypoint.y
     }
+    enemy.current_health = e.current_health
+    enemy.max_health = e.max_health
     entity_system:add(ENTITY_TYPES.ai, enemy)
 end
 

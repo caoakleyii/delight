@@ -3,7 +3,10 @@ local Connect = require 'lib.networking.messages.connect'
 local PlayerJoined = require 'lib.networking.messages.player_joined'
 local PlayerInputs = require 'lib.networking.messages.player_inputs'
 local PlayerInputRelease = require 'lib.networking.messages.player_input_release'
+local PlayerAngle = require 'lib.networking.messages.player_angle'
 local Lerp = require 'lib.networking.messages.lerp'
+local Damage = require 'lib.networking.messages.damage'
+local Destroy = require 'lib.networking.messages.destory'
 local AiSpawned = require 'lib.networking.messages.ai_spawned'
 local Custom = require 'lib.networking.messages.custom'
 
@@ -19,7 +22,10 @@ function Networking:new()
         [NETWORK_MESSAGE_TYPES.player_joined] = PlayerJoined:new(),
         [NETWORK_MESSAGE_TYPES.player_inputs] = PlayerInputs:new(),
         [NETWORK_MESSAGE_TYPES.player_input_release] = PlayerInputRelease:new(),
+        [NETWORK_MESSAGE_TYPES.player_angle] = PlayerAngle:new(),
         [NETWORK_MESSAGE_TYPES.lerp] = Lerp:new(),
+        [NETWORK_MESSAGE_TYPES.damage] = Damage:new(),
+        [NETWORK_MESSAGE_TYPES.destroy] = Destroy:new(),
         [NETWORK_MESSAGE_TYPES.ai_spawned] = AiSpawned:new(),
         [NETWORK_MESSAGE_TYPES.custom] = Custom:new()
     }
